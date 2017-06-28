@@ -9,9 +9,6 @@ package com.springdemo.nodes;
  *
  * @author Buy
  */
-public class Company {
-    
-    private String name;
-    private int earnings;
+public class CompanyManager {
     
 }
