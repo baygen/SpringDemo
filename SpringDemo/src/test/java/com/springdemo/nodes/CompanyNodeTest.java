@@ -93,6 +93,7 @@ public class CompanyNodeTest {
         nodeChild1.addChild(nodeChild2);
         nodeChild3.setParent(nodeMain);
         System.out.println("updateData result : "+nodeMain.getTotalEarnings());
+        
     }
 
     /**
@@ -104,12 +105,23 @@ public class CompanyNodeTest {
         System.out.println("countChildsEarnings");
         nodeMain.addChild(nodeChild1);
         nodeChild1.addChild(nodeChild2);
+        nodeChild2.addChild(nodeChild4);
+        nodeChild2.addChild(nodeChild5);
+        
         nodeChild3.setParent(nodeMain);
         int actual = nodeMain.getTotalEarnings();
         int expected = nodeChild1.getCompanyEarnings()
                 +nodeChild2.getCompanyEarnings()
                 +nodeChild3.getCompanyEarnings()
+                +nodeChild4.getCompanyEarnings()
+                +nodeChild5.getCompanyEarnings()
                 +nodeMain.getCompanyEarnings();
+        long start = System.currentTimeMillis();
+        System.out.println("to String nodemain ");
+        System.out.println(nodeMain.toString());
+        System.out.println("to String node child 1 ");
+        System.out.println(nodeChild1.toString());
+        System.out.println("Elapsed time is: "+(System.currentTimeMillis()-start));
         
         assertEquals(expected, actual);
         

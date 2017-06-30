@@ -14,80 +14,128 @@ import java.util.LinkedList;
  * @author Buy
  * @param <A>
  */
-public class CompanyNode<A extends BasisOfCompany> {
-    
+public class CompanyNode<A extends BasisOfCompany> implements NodeCore<A> {
+
     private final A company;
     private CompanyNode<A> parent;
     private final LinkedList<CompanyNode<A>> childs;
     private int totalEarnings;
-    
-    public CompanyNode(A company){
+    private int gapCounter = 0;
+    private boolean isRootForToString = false;
+
+    public CompanyNode(A company) {
         this.company = company;
         this.parent = null;
         this.childs = new LinkedList<>();
     }
-    
-    public void addChild(CompanyNode<A> childCompany){
-        
-        if(!this.childs.contains(childCompany))
+
+    @Override
+    public void addChild(CompanyNode<A> childCompany) {
+
+        if (!this.childs.contains(childCompany)) {
             childCompany.setParent(this);
+        }
     }
 
+    @Override
     public void setParent(CompanyNode<A> parent) {
-        
-        if(this.parent != null){
+
+        if (this.parent != null) {
             this.parent.getChildsList().remove(this);
-            updateTreeData(this.parent);
+            this.parent.updateTreeData();
         }
-        
+
         this.parent = parent;
         parent.getChildsList().add(this);
-        updateTreeData(parent);
+        parent.updateTreeData();
     }
 
+    @Override
     public LinkedList<CompanyNode<A>> getChildsList() {
         return childs;
     }
 
-    public void updateTreeData(CompanyNode<A> companyToUpdate) {
-        CompanyNode<A> root = companyToUpdate.getParent();
-        while(root!=null){
-            root=root.getParent();
-            companyToUpdate=companyToUpdate.getParent();
+    private void updateTreeData() {
+        CompanyNode<A> root = parent;
+        CompanyNode<A> temporary = this;
+        while (root != null) {
+            temporary = root;
+            root = root.getParent();
         }
-        companyToUpdate.countTotalEarnings();
+        temporary.countAndSetTotalEarnings();
     }
 
-    public int countTotalEarnings() {
-        
+    private int countAndSetTotalEarnings() {
+
         int childsEarnings = 0;
-        for(CompanyNode<A> child:this.getChildsList()){
-            childsEarnings += child.countTotalEarnings();
+        for (CompanyNode<A> child : this.getChildsList()) {
+            childsEarnings += child.countAndSetTotalEarnings();
         }
-        
-        this.totalEarnings = childsEarnings + this.getCompanyEarnings();
+
+        totalEarnings = childsEarnings + getCompanyEarnings();
         return totalEarnings;
     }
 
-    
-    public int getCompanyEarnings(){
+    private String getNodeTreeToString() {
+        StringBuilder builder = new StringBuilder();
+
+        if (getChildsList().isEmpty()) {
+            builder.append(getGaps()).append(company.toString())
+                    .append(System.lineSeparator());
+        } else {
+            builder.append(getGaps()).append(company.toString())
+                    .append(" | ").append(String.valueOf(totalEarnings))
+                    .append(System.lineSeparator());
+
+            for (CompanyNode<A> child : childs) {
+                builder.append(child.getNodeTreeToString());
+            }
+        }
+        return builder.toString();
+    }
+
+    @Override
+    public String toString() {
+        isRootForToString = true;
+        return getNodeTreeToString();
+    }
+
+    public int getCompanyEarnings() {
         return company.getEstimatedEarnings();
     }
-    
-    public int getTotalEarnings(){
+
+    public int getTotalEarnings() {
         return totalEarnings;
     }
-    
+
+    @Override
     public CompanyNode<A> getParent() {
-        return this.parent;
+        return parent;
     }
-    
-    public int getDepth(){
+
+    @Override
+    public int getDepth() {
         int depth;
-        if(getParent()==null)
+        if (getParent() == null) {
             depth = 0;
-        depth = getParent().getDepth()+1;
+        } else {
+            depth = getParent().getDepth() + 1;
+        }
         return depth;
     }
-    
+
+    private String getGaps() {
+        StringBuilder gaps = new StringBuilder();
+        if (isRootForToString) {
+            gapCounter = this.getDepth();
+            gaps.append("");
+        } else {
+            gapCounter = parent.gapCounter;
+            for (int i = 0; i < (this.getDepth() - gapCounter); i++) {
+                gaps.append("-");
+            }
+        }
+        return gaps.toString();
+    }
+
 }
