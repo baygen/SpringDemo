@@ -5,56 +5,64 @@
  */
 package com.springdemo.entity;
 
-import java.io.Serializable;
-import java.math.BigInteger;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 /**
  *
  * @author Buy
  */
-@MappedSuperclass
-@Table(name = "company")
-@XmlRootElement
-public class Company extends  BasisOfCompany implements Serializable {
+@Document(collection = "testCompany")
+public class Company {
 
-    private static final long serialVersionUID = 1L;
+    public static final String PATH_SEPARATOR = ".";
     @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "id")
-    private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 60)
-    @Column(name = "name")
+    private String id;
+    @Field
     private String name;
-    @Column(name = "earnings")
     private Integer earnings;
+    private String path;
+    @Transient
+    private int totalEarnings;
 
-   
+    @Transient
+    private final Collection<Company> childs = new HashSet<>();
 
-    public Company(String name, int earnings ) {
-        super(name, earnings);
-        this.earnings = earnings;
-        this.name = name;
+    public Company() {
     }
 
-    public Integer getId() {
+    public Company(String name, int earnings) {
+        this.earnings = earnings;
+        this.name = name;
+        this.path = name;
+        this.totalEarnings = 0;
+    }
+
+    public Company(String name, int earnings, Company parent) {
+        this(name, earnings);
+        this.path = parent.getPath() + PATH_SEPARATOR + name;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
+//    public String getRoot() {
+//        return root;
+//    }
     public String getName() {
         return name;
     }
@@ -71,21 +79,24 @@ public class Company extends  BasisOfCompany implements Serializable {
         this.earnings = earnings;
     }
 
+    public Collection<Company> getChilds() {
+        return childs;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode()+name.hashCode() : 0);
+        hash += (name != null ? name.hashCode() + earnings.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Company)) {
             return false;
         }
         Company other = (Company) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.name == null && other.name != null) || (this.name != null && !this.name.equals(other.name))) {
             return false;
         }
         return true;
@@ -93,7 +104,34 @@ public class Company extends  BasisOfCompany implements Serializable {
 
     @Override
     public String toString() {
-        return name + " | " +earnings;
+        if (totalEarnings == 0) 
+            return name + " | " + earnings;
+        return name + " | " + earnings + " | " + totalEarnings;
     }
-    
+
+    public String treeToString(String separator) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(" ");
+
+        char[] pathChar = path.toCharArray();
+        for (int i = 0; i < pathChar.length; i++) 
+            if (pathChar[i] == Company.PATH_SEPARATOR.charAt(0)) 
+                sb.append("-");
+        
+        sb.append(this.toString()).append(separator);
+        if (!getChilds().isEmpty()) {
+            for (final Company company : this.getChilds()) {
+                sb.append(company.treeToString(separator));
+            }
+        }
+        return sb.toString();
+    }
+
+    public int getTotalEarnings() {
+        return totalEarnings;
+    }
+
+    public void appendChildsEarnings(int childEarnings) {
+        this.totalEarnings = this.earnings + childEarnings;
+    }
 }

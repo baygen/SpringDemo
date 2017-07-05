@@ -21,6 +21,7 @@ public abstract class BasisOfCompany {
     private long id;
     private String name;
     private int estimatedEarnings;
+    
 
     public BasisOfCompany(String name, int earnings){
         this.estimatedEarnings = earnings;
