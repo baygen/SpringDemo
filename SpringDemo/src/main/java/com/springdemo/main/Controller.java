@@ -10,16 +10,19 @@ import com.springdemo.entity.manager.DAOManager;
 import com.springdemo.nodes.CompanysManager;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
  * @author Buy
  */
-//@RestController
-public class StartController {
-    
+@RestController
+public class Controller {
+    @Autowired
+    private CompanysManager manager;
     public static void main(String[] args) {
         
         ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);

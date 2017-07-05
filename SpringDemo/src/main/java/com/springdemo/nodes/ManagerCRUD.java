@@ -14,8 +14,8 @@ import java.util.List;
  */
 public interface ManagerCRUD  {
     
-    public Company createCompany(String name, int earnings) throws Exception;
-    public Company createCompany(String name, int earnings, String parentName)throws Exception;
+    public Company createAndSaveCompany(String name, int earnings) throws Exception;
+    public Company createAndSaveCompany(String name, int earnings, String parentName)throws Exception;
     
     public void delete(String companyName);
     

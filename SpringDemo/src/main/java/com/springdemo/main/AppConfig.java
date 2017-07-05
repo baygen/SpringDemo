@@ -46,8 +46,8 @@ public class AppConfig {
     }
     
     @Bean
-    public ManagerCRUD nodeManager(){
-        return new CompanysManager();
+    public ManagerCRUD nodeManager() throws Exception{
+        return new CompanysManager(dbService());
     }
     
 }

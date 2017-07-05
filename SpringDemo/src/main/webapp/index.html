@@ -1,13 +1,33 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Test Page</title>
+        <title>Test Companys</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         
         
     </head>
     <body>
+        <form id="create-form"> 
+            Name :<input type="text" id="companyName">
+            Earnings :<input type="text" id="earnings">
+            Parent Name :<input type="text" id="parentName">
+            <button type="submit" id="create">Create</button>
+        </form>
+        <p></p>
+        <form id="edit-form">
+            Company name <input type="text" id="editCompanyName" >
+            New name <input type="text" id="newCompanyName" >
+            New earnings <input type="text" id="newEarnings" >
+            New parent name<input type="text" id="newParentName" >
+            <button type="submit" id="edit">Edit</button>
+        </form>
+        <p></p>
+        <form id="remove-form">
+            Company name <input type="text" id="delCompanyName" >
+            <button type="submit" id="delete">Delete</button>
+            <button type="submit" id="delTree">Delete with childs</button>
+        </form>
         
-        <h1>Hello World!</h1>
+        <div id="feedback"></div>
     </body>
 </html>
