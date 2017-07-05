@@ -16,11 +16,18 @@ import java.util.List;
 public interface BasicDAO {
 
     void save  (Company company)throws Exception;
+    
     void delete(Company company);
+    
     List<Company> getRoots();
+    
     public Company getByName(String companyName);
+    
     Company getByNameWithBuild(String name);
-    void update(Company toUpdate, Company newData);
+    
+    void updateData(Company toUpdate, String key, Object newData);
+    
     boolean exist(String companyName);
+    
     Collection<Company> getChildsOf(String companyName);
 }

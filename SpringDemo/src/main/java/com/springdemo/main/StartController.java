@@ -57,7 +57,7 @@ public class StartController {
         CompanysManager manager = new CompanysManager(dao);
         System.out.println("All elements in db :  "+dao.getAll().size());
         Company test = dao.getRootOf("Child 1 1");
-        manager.update(test);
+//        manager.update(test);
         System.out.println(test.treeToString(System.lineSeparator()));
         System.out.println(System.currentTimeMillis()-start);
     }

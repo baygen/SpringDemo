@@ -60,13 +60,14 @@ public class DAOManagerTest {
 
     @Before
     public void setUp() throws Exception{
-//            for (Company company : data) 
-//                instance.save(company);
+             
+            instance.template.insertAll(data);
+            
     }
 
     @After
     public void tearDown() {
-//        instance.clearDB();
+      instance.clearDB();
     }
 
     /**
@@ -74,12 +75,11 @@ public class DAOManagerTest {
      *
      * @throws java.lang.Exception
      */
-    @Test(expected = Exception.class)
+    @Test
+//        (expected = Exception.class)
     public void testSave() throws Exception {
         System.out.println("save");
 
-        instance.save(data.get(3));
-        data.toArray();
         assertArrayEquals(data.toArray(), instance.getAll().toArray());
     }
 
@@ -90,21 +90,19 @@ public class DAOManagerTest {
     @Test
     public void testUpdate() {
         System.out.println("update");
-
-        Company newData = new Company("Updated", 32400, child1);
-        instance.update(child3, newData);
-
-        assertEquals(3, instance.getChildsOf(data.get(1).getName()).size());
+        instance.updateData(child3, "earnings", 2000);
+        int result = instance.getByName(child3.getName()).getEarnings();
+        assertEquals(2000, result);
     }
 
     /**
      * Test of delete method, of class DAOManager.
      */
-    @Ignore
+//    @Ignore
     @Test
     public void testDelete() {
         System.out.println("delete");
-        instance.delete(child2);
+        instance.delete(child3);
 
         assertTrue((data.size() - 1) == instance.getAll().size());
     }
@@ -145,12 +143,11 @@ public class DAOManagerTest {
     @Test
     public void testGetByNameWithBuild() {
         System.out.println("getByNameWithBuild");
-        String companyName = "child 2";
+        String companyName = child2.getName();
         int expResult = 1;
         int result = instance.getByNameWithBuild(companyName).getChilds().size();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -160,7 +157,7 @@ public class DAOManagerTest {
     @Test
     public void testGetByName() {
         System.out.println("getByName");
-        String companyName = data.get(3).getName();
+        String companyName = child1.getName();
 
         Company result = instance.getByName(companyName);
         assertEquals(companyName, result.getName());
@@ -189,13 +186,13 @@ public class DAOManagerTest {
         System.out.println("getChildsOf");
         String rootName = child2.getName();
 
-        ;
         assertEquals(1, instance.getChildsOf(rootName).size());
     }
 
     /**
      * Test of clearDB method, of class DAOManager.
      */
+    @Ignore
     @Test
     public void testClearDB() {
         System.out.println("clearDB");
@@ -213,11 +210,11 @@ public class DAOManagerTest {
     @Test
     public void testExist() {
         System.out.println("exist");
-        String companyName = data.get(4).getName();
+        String companyName = child2.getName();
 
-        boolean expResult = true;
+//        boolean expResult = true;
         boolean result = instance.exist(companyName);
-        assertEquals(expResult, result);
+        assertTrue( result);
 
     }
 

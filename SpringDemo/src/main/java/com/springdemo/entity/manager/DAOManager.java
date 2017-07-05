@@ -21,7 +21,7 @@ import org.springframework.data.mongodb.core.query.Update;
  */
 public class DAOManager implements BasicDAO {
 
-    private final MongoOperations template;
+    final MongoOperations template;
     
     public DAOManager(final MongoOperations temlate) {
         this.template = temlate;
@@ -29,19 +29,17 @@ public class DAOManager implements BasicDAO {
     
     @Override
     public void save(Company company) throws Exception{
-        if(!exist(company.getName())){
+        if(exist(company.getName())){
+        throw new Exception("Already exist");    
+        }else{
             template.save(company);
         }
-        throw new Exception("Already exist");
     }
     
     @Override
-    public void update(Company toUpdate, Company newData) {
-        
+    public void updateData(Company toUpdate, String key, Object newData) {
         Query query = new Query(Criteria.where("_id").is(toUpdate.getId()));
-        template.updateFirst(query, Update.update("earnings", newData.getEarnings()), Company.class);
-        template.updateFirst(query, Update.update("path", newData.getPath()), Company.class);
-        template.updateFirst(query, Update.update("name", newData.getName()), Company.class);
+        template.updateFirst(query, Update.update(key, newData), Company.class);
     }
     
     @Override
@@ -89,8 +87,6 @@ public class DAOManager implements BasicDAO {
                 Criteria.where("path").regex(rootName + "[.]"));
         return template.find(getChildsQuery, Company.class);
     }
-    
-    
     
     private Company build(final Company root, final Collection<Company> rootTree) {
         final Map< String, Company> map = new HashMap<>();
