@@ -6,10 +6,12 @@
 package com.springdemo.entity.manager;
 
 import com.springdemo.entity.Company;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Resource;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -19,6 +21,7 @@ import org.springframework.data.mongodb.core.query.Update;
  *
  * @author Buy
  */
+//@Resource
 public class DAOManager implements BasicDAO {
 
     final MongoOperations template;
@@ -37,9 +40,15 @@ public class DAOManager implements BasicDAO {
     }
     
     @Override
-    public void updateData(Company toUpdate, String key, Object newData) {
+    public void updateNameOrParent(Company toUpdate, String key, String newData) {
         Query query = new Query(Criteria.where("_id").is(toUpdate.getId()));
         template.updateFirst(query, Update.update(key, newData), Company.class);
+    }
+    
+    @Override
+    public void updateEarnings(Company toUpdate, int newData) {
+        Query query = new Query(Criteria.where("_id").is(toUpdate.getId()));
+        template.updateFirst(query, Update.update("earnings", newData), Company.class);
     }
     
     @Override
@@ -49,8 +58,13 @@ public class DAOManager implements BasicDAO {
 
     @Override
     public List<Company> getRoots() {
-        Query getRoots = new Query(Criteria.where("path").is(null));
-        return template.find(getRoots, Company.class);
+        List<Company> roots= new ArrayList<>();
+        getAll().stream().filter((company) -> 
+                (company.getName().equals(company.getPath())))
+                .forEachOrdered((company) -> {
+            roots.add(company);
+        });
+        return roots;
     }
     
     public Collection<Company> getAll(){
@@ -120,5 +134,7 @@ public class DAOManager implements BasicDAO {
         Query query = new Query(Criteria.where("name").is(companyName));
         return template.exists(query, Company.class);
     }
+
+    
     
 }

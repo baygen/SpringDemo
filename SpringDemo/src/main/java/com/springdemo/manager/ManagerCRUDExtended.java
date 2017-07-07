@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.springdemo.nodes;
+package com.springdemo.manager;
 
 import com.springdemo.entity.Company;
 
@@ -12,8 +12,10 @@ import com.springdemo.entity.Company;
  * @author Buy
  */
 public interface ManagerCRUDExtended extends ManagerCRUD{
-    public void edit(String companyToEdit, String newName, int newEarnings, String newParentCompanyName);
+    public void editParent(String companyToEdit,String newParentName) 
+                throws Exception;
+    public void rename(String curName, String newName);
     public void deleteTree(String rootNameToDelete);
     public String toStringTreeOf(Company company);
-    public Company updateDataOf(Company company);
+    public String getAllCompanyToString();
 }

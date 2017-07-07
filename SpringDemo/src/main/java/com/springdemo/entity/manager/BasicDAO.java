@@ -13,6 +13,7 @@ import java.util.List;
  *
  * @author Buy
  */
+//@Resource
 public interface BasicDAO {
 
     void save  (Company company)throws Exception;
@@ -25,7 +26,9 @@ public interface BasicDAO {
     
     Company getByNameWithBuild(String name);
     
-    void updateData(Company toUpdate, String key, Object newData);
+    void updateNameOrParent(Company toUpdate, String key, String newData);
+    
+    void updateEarnings(Company company, int newEarnings);
     
     boolean exist(String companyName);
     
